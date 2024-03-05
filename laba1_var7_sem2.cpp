@@ -16,6 +16,7 @@
 
 #include "iostream"
 #include <fstream>
+#include "vector"
 
 
 using namespace std;
@@ -27,10 +28,10 @@ int main() {
 //    string path = "data.txt";
 
     // некорректные тесты
-//     string path = "/Users/anton/code/stepik/test2.txt";
+     string path = "/Users/anton/code/stepik/test2.txt";
 
     // корректные тесты
-    string path = "/Users/anton/code/stepik/test.txt";
+//    string path = "/Users/anton/code/stepik/test.txt";
 
     ifstream file(path); // чтение данных из файла
 
@@ -43,9 +44,8 @@ int main() {
     }
 
     string constant;
-    getline(file, constant);
-
-//    cout << constant << endl;
+    file >> constant;
+    cout << constant;
 
     // Проверка ввода
     if (file.fail()) {
@@ -58,23 +58,40 @@ int main() {
     int count = 0;
 
     string surname;
+    string fullname;
     string s;
 
-    while (getline(file, s)) {
+
+    while (getline(file, s)) {  //нельзя использовать getline
         count++;
+        fullname = "";
         surname = "";
         int i = 0;
-        for (int j = 0; j < s.size(); j++) {
+        for (int j = 0; j < s.size(); j++) { //нельзя использовать size
             char c = s[j];
-            if (i == 0) {
-                surname += c;
-            }
             if (c == ' ') {
                 i++;
-                surname += s[j + 1];
-                surname += ". ";
+                fullname += " ";
+                fullname += s[j + 1];
+                fullname += ".";
+            }
+            if (i == 0) {
+                fullname += c;
+                surname += c;
             }
         }
-        cout << surname << endl;
+
+        vector<string> a;
+        vector<string> b;
+        a.push_back(fullname);// заполнение массива фамилий с инициаламиa
+        b.push_back(surname); // заполнение массива только фамилий
+
+        for (int l=0; l <= size(b); l++) {
+            if (b[l] == constant) {
+                cout << count << " строка с заданной фамилией: ";
+            }
+            cout << a[l] << endl;
+        } // печать людей с совпадающей фамилией
     }
+    file.close();
 }
