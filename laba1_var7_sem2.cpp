@@ -16,11 +16,9 @@
 
 #include "iostream"
 #include <fstream>
-#include "vector"
-
+#include "string"
 
 using namespace std;
-
 
 int main() {
 
@@ -28,10 +26,10 @@ int main() {
 //    string path = "data.txt";
 
     // некорректные тесты
-     string path = "/Users/anton/code/stepik/test2.txt";
+//    string path = "/Users/anton/code/stepik/test2.txt";
 
     // корректные тесты
-//    string path = "/Users/anton/code/stepik/test.txt";
+    string path = "/Users/anton/code/stepik/test.txt";
 
     ifstream file(path); // чтение данных из файла
 
@@ -45,7 +43,7 @@ int main() {
 
     string constant;
     file >> constant;
-    cout << constant;
+    cout << "Искомая фамилия: " << constant << endl;
 
     // Проверка ввода
     if (file.fail()) {
@@ -57,41 +55,35 @@ int main() {
     // подсчет количества строк
     int count = 0;
 
-    string surname;
-    string fullname;
-    string s;
+    char surname[255];
+    char name[255];
+    char secondName[255];
+    char found[50][255];
 
-
-    while (getline(file, s)) {  //нельзя использовать getline
-        count++;
-        fullname = "";
-        surname = "";
-        int i = 0;
-        for (int j = 0; j < s.size(); j++) { //нельзя использовать size
-            char c = s[j];
-            if (c == ' ') {
-                i++;
-                fullname += " ";
-                fullname += s[j + 1];
-                fullname += ".";
-            }
-            if (i == 0) {
-                fullname += c;
-                surname += c;
-            }
+    while (file >> surname >> name >> secondName) {
+        cout << "\n" << surname << " " << name[0] << ". " << secondName[0] << ".";
+        if (surname == constant) {
+            count++;
+            strcpy(found[count], surname);
+            strcat(found[count], " ");
+            strncat(found[count], name, 1);
+            strcat(found[count], ". ");
+            strncat(found[count], secondName, 1);
+            strcat(found[count], ".");
         }
-
-        vector<string> a;
-        vector<string> b;
-        a.push_back(fullname);// заполнение массива фамилий с инициаламиa
-        b.push_back(surname); // заполнение массива только фамилий
-
-        for (int l=0; l <= size(b); l++) {
-            if (b[l] == constant) {
-                cout << count << " строка с заданной фамилией: ";
-            }
-            cout << a[l] << endl;
-        } // печать людей с совпадающей фамилией
     }
+
     file.close();
+    cout << endl;
+
+    if (count != 0) {
+        cout << "\n" << "Найденные фамилии: ";
+        for (int i = 0; i <= count; i++) {
+            cout << found[i] << endl;
+        }
+    } else {
+        cout << "\n" << "Искомой фамилии в списке нет";
+    }
+
+    return (0);
 }
