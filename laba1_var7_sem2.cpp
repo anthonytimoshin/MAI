@@ -9,45 +9,29 @@
 * Modified By  :                                                *
 * Lit source   :                                                *
 * Created      : 24/02/24                                       *
-* Last Revision: 17/03/24                                       *
+* Last Revision: 27/02/24                                       *
 * Comment(s)   : Символьные данные                              *
 ****************************************************************/
 
 
 #include "iostream"
 #include <fstream>
-#include "string"
+
 
 using namespace std;
 
-// корректные тесты
-const string path = "/Users/anton/code/stepik/test.txt";
-//const string path = "/Users/anton/code/stepik/test2.txt";
-//const string path = "/Users/anton/code/stepik/test3.txt";
-
-// некорректные тесты
-//const string path = "/Users/anton/code/stepik/test4.txt";
-//const string path = "/Users/anton/code/stepik/test5.txt";
-//const string path = "/Users/anton/code/stepik/test6.txt";
-//const string path = "/Users/anton/code/stepik/test7.txt";
-
-void printInitials(const char surname[], const char name[], const char secondName[]) {
-    cout << "\n" << surname << " " << name[0] << ". " << secondName[0] << ".";
-}
-
-void searching(const char constant[], const char surname[], const char name[], const char secondName[], char found[][255], int& count) {
-    if (strcmp(constant, surname) == 0) {
-        count++;
-        strcpy(found[count], surname);
-        strcat(found[count], " ");
-        strncat(found[count], name, 1);
-        strcat(found[count], ". ");
-        strncat(found[count], secondName, 1);
-        strcat(found[count], ".");
-    }
-}
 
 int main() {
+
+    const int size = 255;
+    // инициализация переменной файла
+//    string path = "data.txt";
+
+    // некорректные тесты
+//     string path = "/Users/anton/code/stepik/test2.txt";
+
+    // корректные тесты
+    string path = "/Users/anton/code/stepik/test.txt";
 
     ifstream file(path); // чтение данных из файла
 
@@ -56,53 +40,42 @@ int main() {
         cout << "Файл не найден" << endl;
         return 0;
     } else {
-        if (file.peek() == -1) { // файл пустой?
-            cout << "Файл пустой";
-            file.close();
-            return 0;
-        }
         cout << "Файл открыт" << endl;
     }
 
-    // инициализация переменных
-    char constant[255]; // искомая фамилия
+    string constant;
+    getline(file, constant);
 
-    int count = 0; // количество искомой фамилии в списке
-    int count0 = 0; // количество фамилий в списке
+//    cout << constant << endl;
 
-    char surname[255]; // фамилия
-    char name[255]; // имя
-    char secondName[255]; // отчество
-    char found[50][255]; // массив для хранения найденных фамилий
-
-
-    file >> constant;
-    cout << "Искомая фамилия: " << constant << endl;
-
-
-    while (file >> surname >> name >> secondName) {
-        count0++;
-        printInitials(surname, name, secondName);
-        searching(constant, surname, name, secondName, found, count);
+    // Проверка ввода
+    if (file.fail()) {
+        cout << "Не удалось считать значение" << endl;
+        file.close();
+        return -1;
     }
 
-    file.close();
+    // подсчет количества строк
+    int count = 0;
 
-    if (count0 == 0) {
-        cout << "Фамилии не введены";
-        return 0;
-    }
+    string surname;
+    string s;
 
-    cout << endl;
-
-    if (count != 0) {
-        cout << "\n" << "Найденные фамилии: ";
-        for (int i = 0; i <= count; i++) {
-            cout << found[i] << endl;
+    while (getline(file, s)) {
+        count++;
+        surname = "";
+        int i = 0;
+        for (int j = 0; j < size; j++) {
+            char c = s[j];
+            if (i == 0) {
+                surname += c;
+            }
+            if (c == ' ') {
+                i++;
+                surname += s[j + 1];
+                surname += ". ";
+            }
         }
-    } else {
-        cout << "\n" << "Искомой фамилии в списке нет";
+        cout << surname << endl;
     }
-
-    return (0);
 }
