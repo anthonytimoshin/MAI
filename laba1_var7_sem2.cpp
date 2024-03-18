@@ -21,7 +21,7 @@
 using namespace std;
 
 // корректные тесты
-//const string path = "/Users/anton/code/stepik/test.txt";
+const string path = "/Users/anton/code/stepik/test.txt";
 //const string path = "/Users/anton/code/stepik/test2.txt";
 //const string path = "/Users/anton/code/stepik/test3.txt";
 
@@ -30,6 +30,22 @@ using namespace std;
 //const string path = "/Users/anton/code/stepik/test5.txt";
 //const string path = "/Users/anton/code/stepik/test6.txt";
 //const string path = "/Users/anton/code/stepik/test7.txt";
+
+void printInitials(const char surname[], const char name[], const char secondName[]) {
+    cout << "\n" << surname << " " << name[0] << ". " << secondName[0] << ".";
+}
+
+void searching(const char constant[], const char surname[], const char name[], const char secondName[], char found[][255], int& count) {
+    if (strcmp(constant, surname) == 0) {
+        count++;
+        strcpy(found[count], surname);
+        strcat(found[count], " ");
+        strncat(found[count], name, 1);
+        strcat(found[count], ". ");
+        strncat(found[count], secondName, 1);
+        strcat(found[count], ".");
+    }
+}
 
 int main() {
 
@@ -66,16 +82,8 @@ int main() {
 
     while (file >> surname >> name >> secondName) {
         count0++;
-        cout << "\n" << surname << " " << name[0] << ". " << secondName[0] << ".";
-        if (strcmp(constant, surname) == 0) {
-            count++;
-            strcpy(found[count], surname);
-            strcat(found[count], " ");
-            strncat(found[count], name, 1);
-            strcat(found[count], ". ");
-            strncat(found[count], secondName, 1);
-            strcat(found[count], ".");
-        }
+        printInitials(surname, name, secondName);
+        searching(constant, surname, name, secondName, found, count);
     }
 
     file.close();
