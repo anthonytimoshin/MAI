@@ -9,7 +9,7 @@
 * Modified By  :                                                *
 * Lit source   :                                                *
 * Created      : 24/02/24                                       *
-* Last Revision: 27/02/24                                       *
+* Last Revision: 17/03/24                                       *
 * Comment(s)   : Символьные данные                              *
 ****************************************************************/
 
@@ -20,22 +20,18 @@
 
 using namespace std;
 
-// некорректные тесты
-//    const string path = "/Users/anton/code/stepik/test2.txt";
-
 // корректные тесты
-const string path = "/Users/anton/code/stepik/test4.txt";
+//const string path = "/Users/anton/code/stepik/test.txt";
+//const string path = "/Users/anton/code/stepik/test2.txt";
+//const string path = "/Users/anton/code/stepik/test3.txt";
+
+// некорректные тесты
+//const string path = "/Users/anton/code/stepik/test4.txt";
+//const string path = "/Users/anton/code/stepik/test5.txt";
+//const string path = "/Users/anton/code/stepik/test6.txt";
+//const string path = "/Users/anton/code/stepik/test7.txt";
 
 int main() {
-    char constant[255]; // искомая фамилия
-
-    int count = 0; // количество искомой фамилии в списке
-    int count0 = 0; // количество фамилий в списке
-
-    char surname[255];
-    char name[255];
-    char secondName[255];
-    char found[50][255];
 
     ifstream file(path); // чтение данных из файла
 
@@ -44,15 +40,26 @@ int main() {
         cout << "Файл не найден" << endl;
         return 0;
     } else {
-        if (file.peek() == -1) {
+        if (file.peek() == -1) { // файл пустой?
             cout << "Файл пустой";
             file.close();
             return 0;
         }
         cout << "Файл открыт" << endl;
     }
-    
-    
+
+    // инициализация переменных
+    char constant[255]; // искомая фамилия
+
+    int count = 0; // количество искомой фамилии в списке
+    int count0 = 0; // количество фамилий в списке
+
+    char surname[255]; // фамилия
+    char name[255]; // имя
+    char secondName[255]; // отчество
+    char found[50][255]; // массив для хранения найденных фамилий
+
+
     file >> constant;
     cout << "Искомая фамилия: " << constant << endl;
 
