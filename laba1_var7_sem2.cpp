@@ -20,16 +20,22 @@
 
 using namespace std;
 
+// некорректные тесты
+//    const string path = "/Users/anton/code/stepik/test2.txt";
+
+// корректные тесты
+const string path = "/Users/anton/code/stepik/test4.txt";
+
 int main() {
+    char constant[255]; // искомая фамилия
 
-    // инициализация переменной файла
-//    string path = "data.txt";
+    int count = 0; // количество искомой фамилии в списке
+    int count0 = 0; // количество фамилий в списке
 
-    // некорректные тесты
-//    string path = "/Users/anton/code/stepik/test2.txt";
-
-    // корректные тесты
-    string path = "/Users/anton/code/stepik/test.txt";
+    char surname[255];
+    char name[255];
+    char secondName[255];
+    char found[50][255];
 
     ifstream file(path); // чтение данных из файла
 
@@ -38,31 +44,23 @@ int main() {
         cout << "Файл не найден" << endl;
         return 0;
     } else {
+        if (file.peek() == -1) {
+            cout << "Файл пустой";
+            file.close();
+            return 0;
+        }
         cout << "Файл открыт" << endl;
     }
-
-    string constant;
+    
+    
     file >> constant;
     cout << "Искомая фамилия: " << constant << endl;
 
-    // Проверка ввода
-    if (file.fail()) {
-        cout << "Не удалось считать значение" << endl;
-        file.close();
-        return -1;
-    }
-
-    // подсчет количества строк
-    int count = 0;
-
-    char surname[255];
-    char name[255];
-    char secondName[255];
-    char found[50][255];
 
     while (file >> surname >> name >> secondName) {
+        count0++;
         cout << "\n" << surname << " " << name[0] << ". " << secondName[0] << ".";
-        if (surname == constant) {
+        if (strcmp(constant, surname) == 0) {
             count++;
             strcpy(found[count], surname);
             strcat(found[count], " ");
@@ -74,6 +72,12 @@ int main() {
     }
 
     file.close();
+
+    if (count0 == 0) {
+        cout << "Фамилии не введены";
+        return 0;
+    }
+
     cout << endl;
 
     if (count != 0) {
