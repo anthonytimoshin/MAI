@@ -31,7 +31,7 @@ int main() {
 //     string path = "/Users/anton/code/stepik/test2.txt";
 
     // корректные тесты
-    string path = "/Users/anton/code/stepik/test.txt";
+    string path = "/Users/anton/code/stepik/test4.txt";
 
     ifstream file(path); // чтение данных из файла
 
@@ -40,6 +40,11 @@ int main() {
         cout << "Файл не найден" << endl;
         return 0;
     } else {
+        if (file.peek() == -1) { // файл пустой?
+            cout << "Файл пустой";
+            file.close();
+            return 0;
+        }
         cout << "Файл открыт" << endl;
     }
 
@@ -48,13 +53,6 @@ int main() {
 
     cout << "Искомая фамилия: " << constant << endl;
     cout << endl;
-
-    // Проверка ввода
-    if (file.fail()) {
-        cout << "Не удалось считать значение" << endl;
-        file.close();
-        return -1;
-    }
 
     // подсчет количества строк
     int count = 0;
@@ -89,7 +87,18 @@ int main() {
         cout << surname << endl;
     }
 
+    if (count == 0) { // проверка наличия введенных ФИО
+        cout << "Фамилии не введены";
+        return 0;
+    }
+
+    if (found_surnames == "") {
+        cout << endl << "Искомой фамилии в списке нет";
+        return 0;
+    }
     cout << endl;
     cout << "Найденные фамилии: " << endl;
     cout << found_surnames << endl;
+
+    return 0;
 }
