@@ -9,7 +9,7 @@
 * Modified By  :                                                *
 * Lit source   :                                                *
 * Created      : 24/02/24                                       *
-* Last Revision: 27/02/24                                       *
+* Last Revision: 23/03/24                                       *
 * Comment(s)   : Символьные данные                              *
 ****************************************************************/
 
@@ -46,7 +46,8 @@ int main() {
     string constant;
     getline(file, constant);
 
-//    cout << constant << endl;
+    cout << "Искомая фамилия: " << constant << endl;
+    cout << endl;
 
     // Проверка ввода
     if (file.fail()) {
@@ -58,8 +59,10 @@ int main() {
     // подсчет количества строк
     int count = 0;
 
-    string surname;
+    int m = 0; // 0 - фамилия не совпала, 1 - фамилия совпала
+    string surname; // фамилия и инициалы
     string s;
+    string found_surnames; // найденные фамилии и их инициалы
 
     while (getline(file, s)) {
         count++;
@@ -71,11 +74,22 @@ int main() {
                 surname += c;
             }
             if (c == ' ') {
+                if (surname == constant + ' ') {
+                    m++;
+                }
                 i++;
                 surname += s[j + 1];
                 surname += ". ";
             }
+            if (m == 1 && i == 2) {
+                found_surnames += surname + "\n";
+                m = 0;
+            }
         }
         cout << surname << endl;
     }
+
+    cout << endl;
+    cout << "Найденные фамилии: " << endl;
+    cout << found_surnames << endl;
 }
