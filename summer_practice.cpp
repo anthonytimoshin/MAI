@@ -1,102 +1,107 @@
-/*********************************************************************************************************
-*                               Курс ПРОГРАММИРОВАНИЕ                                                    *
-**********************************************************************************************************
-* Project type  : Win64 Console Application                                                              *
-* Project name  : Practice                                                                               *
-* File name     : test.cpp                                                                               *
-* Language      : CPP                                                                                    *
-* Programmers   : Тимошин Антон Алексеевич, Воробьев Андрей Николаевич                                   *
-* Modified By   :                                                                                        *
-* Created       : 10.06.2024                                                                             *
-* Last Revision : 14.06.2024                                                                             *
-* Comment       :                                                                                        *
-*********************************************************************************************************/
+/************************************************************************************************
+*                                 ОЗНАКОМИТЕЛЬНАЯ ПРАКТИКА                                      *
+*************************************************************************************************
+* Project type  : Win64 Console Application                                                     *
+* Project name  : Practice                                                                      *
+* File name     : practice.cpp                                                                  *
+* Language      : CPP                                                                           *
+* Programmers   : Тимошин Антон Алексеевич, Воробьев Андрей Николаевич                          *
+* Modified By   :                                                                               *
+* Created       : 10.06.2024                                                                    *
+* Last Revision : 14.06.2024                                                                    *
+* Comment       :                                                                               *
+************************************************************************************************/
 
 #include <iostream>
-#include <fstream>
-#include <string>
+#include "fstream"
+
 
 using namespace std;
 
-/**************************************************************/
-/*           Г Л О Б А Л Ь Н Ы Е   К О Н С Т А Н Т Ы          */
-/**************************************************************/
+/**************************************************************
+*                      ВХОДНЫЕ ДАННЫЕ                         *
+**************************************************************/
 
-const char file[] = "/Users/anton/code/stepik/info.txt";    // файл исходных данных
+//const char* filename = "non_existent_file.txt";               // несуществующий файл
+//const char* filename = "empty_file.txt";                      // пустой файл
+const string path = "/Users/anton/code/stepik/info.txt";        // файл с корректными исходными данными
+//... всякие тесты
 
-bool Input_Error = false;  // булевая переменная-флаг ошибки ввода
+/**************************************************************
+*                         КОНСТАНТЫ                           *
+**************************************************************/
 
-struct Aircraft // Структура для хранения данных о самолетах
+const int data_len = 10;        // фиксированная максимальная длина строки в ячейке структуры
+const int max_len = 100;        // максимальное количество элементов в массиве
+const int table_width = 30;     // ширина ячеек таблицы
+
+/**************************************************************
+*                         СТРУКТУРЫ                           *
+**************************************************************/
+
+struct Aircraft     // Структура для хранения данных о приземлившихся самолетах
 {
-    char  Number[40];   // номер рейса
-    int Num;            // бортовой номер
-    float Weight;       // вес груза
-    int boxCount;       // количество контейнеров
+    int flight_number;                  // номер рейса
+    char tail_number[data_len];         // бортовой номер
+    float cargo_weight;                 // вес груза
+    int box_quantity;                   // количество контейнеров
+    int id;                             // индекс самолета
 };
 
-struct Index // Структура для индексной сортировки
+struct indexSort           // Структура для индексной сортировки
 {
-    int Ind;            // индекс сортировки
-    int Num;            // номер рейса
+    int index;              // индекс сортировки (позиция в исходной структуре)
+    int flight_number;      // номер рейса (поле, которое нужно отсортировать)
 };
 
-/********************************************************************
-*              П Р О Т О Т И П Ы    Ф У Н К Ц И Й                   *
-*********************************************************************/
+/**************************************************************
+*                     ПРОТОТИПЫ ФУНКЦИЙ                       *
+**************************************************************/
+void readDataFromFile(Aircraft &plane,
+                      Aircraft *planes,
+                      int &massiveLen); // функция чтения данных из файла
 
-//Функция вывода ошибок пользователю
-void Error(int ErrorCode);
+void echoPrint(Aircraft *planes,
+               int massiveLen); // функция эхопечати исходной структуры данных
 
-//Функция счетчик строк
-int StrCount();
 
-//Функция ввода из файла
-void Input(Aircraft* AGroup);
+/**************************************************************
+*                     ОСНОВНАЯ ПРОГРАММА                      *
+**************************************************************/
 
-//Функция эхо-вывода
-void Print(Aircraft* AGroup, int Count);
+int main() {
+    Aircraft plane; // переменная для хранения информации об одном самолёте
+    Aircraft planes[max_len]; // массив для хранения информации о всех самолётах
+    indexSort massiveSort[max_len]; // массив для индексной сортировки
 
-//Функция обмена значением
-void swap(Index* IndexVec, int i, int j);
+    int massiveLen = 0; // так как в массивах отсчет элементов начинается с 0 (строка 87)
 
-//Функция выбор-сортировки
-void selection_sort(Index* IndexVec, int Size);
+    readDataFromFile(plane, planes, massiveLen);
+    echoPrint(planes, massiveLen);
 
-//Функция вывода результата
-void PrintResult(Aircraft* AGroup, Index* IndexVec, int Count);
-
-//Функция начала сортировки
-void Sort(Aircraft* AGroup, Index* IndexVec, int Count);
-
-//Функция подсчета общего числа контейнеров
-int BoxSumm(Aircraft* AGroup, int Count);
-
-/**************************************************************/
-/*            О С Н О В Н А Я     П Р О Г Р А М М А           */
-/**************************************************************/
-
-int main()
-{
-//    setlocale(LC_ALL, "RUSSIAN");
-
-    int Size = StrCount();
-    Aircraft* Plane = new Aircraft[Size];
-    Index* IndexVec = new Index[Size];
-
-    if (!Input_Error) {
-        Input(Plane);
-        if (!Input_Error) {
-            Print(Plane, Size);
-            Sort(Plane, IndexVec, Size);
-            PrintResult(Plane, IndexVec, Size);
-        }
-    }
-
-    delete[] Plane;
-    delete[] IndexVec;
     return 0;
 }
 
-/**************************************************************/
-/*           О П Р Е Д Е Л Е Н И Е  Ф У Н К Ц И Й             */
-/**************************************************************/
+/**************************************************************
+*                    ОПРЕДЕЛЕНИЕ ФУНКЦИЙ                      *
+**************************************************************/
+
+void readDataFromFile(Aircraft &plane,
+                     Aircraft *planes,
+                     int &massiveLen) { // функция чтения из файла
+    ifstream file(path);
+    while (!file.eof()) {
+        massiveLen++;
+        plane.id = massiveLen;
+        file >> plane.flight_number >> plane.tail_number >> plane.cargo_weight >> plane.box_quantity;
+        planes[massiveLen - 1] = plane; // так как в массивах отсчет элементов начинается с 0 (строка 71)
+    }
+}
+
+void echoPrint(Aircraft *planes,
+               int massiveLen) { // функция эхопечати данных
+    for (int i = 0; i < massiveLen; i++) {
+        cout << planes[i].flight_number << " " << planes[i].tail_number << " " << planes[i].cargo_weight << " " <<
+        planes[i].box_quantity << endl;
+    }
+}
