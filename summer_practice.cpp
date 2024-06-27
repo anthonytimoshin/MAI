@@ -63,7 +63,7 @@ void readDataFromFile(Aircraft &plane,
 void echoPrint(Aircraft *planes,
                int massiveLen); // функция эхопечати исходной структуры данных
 
-void errorHandler(); // функция обработки ошибок при чтении файла
+void errorHandler(); // функция обработки ошибок (вывол ошибок пользователю)
 
 int boxCount(Aircraft *planes, int massiveLen); // функция, определяющая суммарное количество контейнеров
 
@@ -72,6 +72,11 @@ void printUpperPart();
 void printMiddlePart();
 
 void printLowerPart();
+
+void sortByFlightNumber(Aircraft *planes, int massiveLen, indexSort massiveSort[max_len]);
+
+void printResult(Aircraft* planes, indexSort* massiveSort, int index);
+
 
 /**************************************************************
 *                     ОСНОВНАЯ ПРОГРАММА                      *
@@ -86,6 +91,7 @@ int main() {
 
     readDataFromFile(plane, planes, massiveLen);
     echoPrint(planes, massiveLen);
+    sortByFlightNumber(planes, massiveLen, massiveSort);
     int containers = boxCount(planes, massiveLen);
     cout << "Суммарное количество контейнеров: " << containers;
 
@@ -99,7 +105,14 @@ int main() {
 void readDataFromFile(Aircraft &plane,
                      Aircraft *planes,
                      int &massiveLen) { // функция чтения из файла
+    int errorCode = 0;
+
     ifstream file(path);
+
+//    if (!file) {
+//        errorCode = 1;
+//    }
+//    else if file
 
     while (!file.eof()) {
         massiveLen++;
@@ -141,4 +154,58 @@ void printMiddlePart() {
 
 void printLowerPart() {
     cout << "╚════════════════════╩═══════════════════╩════════════════════╩════════════════════╝" << endl;
+}
+
+void errorHandler() {
+    // тут будет различные коды состояний ошибок из функции readDataFromFile, их нужно будет описать
+    // + входной контроль данных
+    // неполная структура ??
+}
+
+void sortByFlightNumber(Aircraft *planes, int massiveLen, indexSort massiveSort[max_len]) {
+    indexSort Temporary;
+    int index = 0;
+
+    cout << "Сортировка по номеру рейса: " << endl;
+
+    for (int i = 0; i < massiveLen; i++) {
+        massiveSort[index].index = i + 1;
+        massiveSort[index].flight_number = planes[i].flight_number;
+        index++;
+    }
+
+    int min = 0;
+    int minIndex = 0;
+    int j = 0;
+
+    while (j < index) {
+        min = massiveSort[j].flight_number;
+        minIndex = j;
+
+        for (int i = j; i < index; i++) {
+            if (massiveSort[i].flight_number < min) {
+                min = massiveSort[i].flight_number;
+                minIndex = i;
+            }
+        }
+
+        Temporary = massiveSort[j];
+        massiveSort[j] = massiveSort[minIndex];
+        massiveSort[minIndex] = Temporary;
+
+        j++;
+    }
+    printResult(planes, massiveSort, index);
+}
+
+void printResult(Aircraft* planes, indexSort* massiveSort, int index) {
+    printUpperPart();
+    for (int i = 0; i < index; i++) {
+        printMiddlePart();
+        cout << "║" << setw(12) << planes[massiveSort[i].index-1].flight_number << setw(11) << "║"
+             << setw(14) << planes[massiveSort[i].index-1].tail_number << setw(9) << "║"
+             << setw(12) << planes[massiveSort[i].index-1].cargo_weight << setw(11) << "║"
+             << setw(11) << planes[massiveSort[i].index-1].box_quantity << setw(12) << "║" << planes[massiveSort[i].index-1].id <<endl;
+    }
+    printLowerPart();
 }
