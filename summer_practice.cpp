@@ -61,11 +61,10 @@ int checkInteger(string &line, int massiveLen);
 
 int checkDouble(const string &line, int massiveLen);
 
-void errorHandler(int errorFlag);
-
 void readDataFromFile(Aircraft &plane,
                       Aircraft *planes,
-                      int &massiveLen); // функция чтения данных из файла
+                      int &massiveLen,
+                      int &errorCode); // функция чтения данных из файла
 
 void echoPrint(Aircraft *planes,
                int massiveLen); // функция эхопечати исходной структуры данных
@@ -93,8 +92,14 @@ int main() {
     indexSort massiveSort[max_len];     // массив для индексной сортировки
 
     int massiveLen = 0; // так как в массивах отсчет элементов начинается с 0
+    int errorCode = 0; // переменная-флаг ошибок
 
-    readDataFromFile(plane, planes, massiveLen);
+    readDataFromFile(plane, planes, massiveLen, errorCode);
+
+    if (errorCode != 0) {
+        return 0;
+    }
+
     echoPrint(planes, massiveLen);
     sortByFlightNumber(planes, massiveLen, massiveSort);
     int containers = boxCount(planes, massiveLen);
@@ -109,7 +114,7 @@ int main() {
 
 int checkTailNumber(const string &tailNumber, int massiveLen) {
     if (tailNumber.size() != 6) {
-        cout << "Ошибка в " << massiveLen<< " строке: в бортовом номере не совпадает количество символов." << endl;
+        cout << "Ошибка в " << massiveLen << " строке: в бортовом номере не совпадает количество символов." << endl;
         return 1;
     }
     if ((tailNumber[0] >= 'A' && tailNumber[0] <= 'Z') == 0) {
@@ -124,7 +129,7 @@ int checkTailNumber(const string &tailNumber, int massiveLen) {
     }
     for (int i = 2; i < 5; i++) { // Проверяем остальные элементы на цифры
         if (!isdigit(tailNumber[i])) {
-            cout << "Ошибка в "<< massiveLen <<" строке: в бортовом номере не целое число после дефиса." << endl;
+            cout << "Ошибка в " << massiveLen << " строке: в бортовом номере не целое число после дефиса." << endl;
             return 1;
         }
     }
@@ -151,27 +156,22 @@ int checkDouble(const string &line, int massiveLen) {
     return 0;
 }
 
-void errorHandler(int errorFlag) {
-
-}
-
 void readDataFromFile(Aircraft &plane,
                       Aircraft *planes,
-                      int &massiveLen) { // функция чтения из файла
+                      int &massiveLen,
+                      int &errorCode) { // функция чтения из файла
 
     ifstream file(path);
 
     if (!file) {
-        cout << "Файл " << path <<" не существует" << endl;
-        exit(1);
-    }
-    else if (file.fail()) {
+        cout << "Файл " << path << " не существует" << endl;
+        errorCode++;
+    } else if (file.fail()) {
         cout << "Не удалось открыть файл " << path << endl;
-        exit(1);
-    }
-    else if (file.peek() == -1) {
+        errorCode++;
+    } else if (file.peek() == -1) {
         cout << "Файл " << path << " пустой" << endl;
-        exit(1);
+        errorCode++;
     }
 
     while (!file.eof()) {
@@ -179,10 +179,11 @@ void readDataFromFile(Aircraft &plane,
         plane.id = massiveLen;
         file >> plane.flight_number >> plane.tail_number >> plane.cargo_weight >> plane.box_quantity;
 
-        checkInteger(plane.flight_number, massiveLen);
-        checkTailNumber(plane.tail_number, massiveLen);
-        checkDouble(plane.cargo_weight, massiveLen);
-        checkInteger(plane.box_quantity, massiveLen);
+        errorCode =
+                checkInteger(plane.flight_number, massiveLen) +
+                checkTailNumber(plane.tail_number, massiveLen) +
+                checkDouble(plane.cargo_weight, massiveLen) +
+                checkInteger(plane.box_quantity, massiveLen);
 
         planes[massiveLen - 1] = plane; // так как в массивах отсчет элементов начинается с 0
     }
