@@ -128,15 +128,16 @@ void echoPrint(Aircraft *planes,
     for (int i = 0; i < massiveLen; i++) {
         printMiddlePart();
         cout << "║" << setw(12) << planes[i].flight_number << setw(11) << "║"
-                    << setw(14) << planes[i].tail_number << setw(9) << "║"
+                    << setw(14) << planes[i].tail_number << setw(10) << "║"
                     << setw(12) << planes[i].cargo_weight << setw(11) << "║"
-                    << setw(11) << planes[i].box_quantity << setw(12) << "║" << planes[i].id <<endl;
+                    << setw(11) << planes[i].box_quantity << setw(12) << "║"
+                    << setw(11) << planes[i].id << setw(12) << "║" <<endl;
     }
     printLowerPart();
 }
 
 int boxCount(Aircraft *planes, int massiveLen) {
-    int boxSum = 0; // счетчик контейнеров
+    int boxSum = 0;         // счетчик контейнеров
     for (int i = 0; i < massiveLen; i++) {
         boxSum += planes[i].box_quantity;
     }
@@ -144,16 +145,16 @@ int boxCount(Aircraft *planes, int massiveLen) {
 }
 
 void printUpperPart() {
-    cout << "╔════════════════════╦═══════════════════╦════════════════════╦════════════════════╗" << endl;
-    cout << "║    НОМЕР РЕЙСА     ║   БОРТОВОЙ НОМЕР  ║      ВЕС ГРУЗА     ║ КОЛ-ВО КОНТЕЙНЕРОВ ║" << endl;
+    cout << "╔════════════════════╦════════════════════╦════════════════════╦════════════════════╦════════════════════╗" << endl;
+    cout << "║    НОМЕР РЕЙСА     ║   БОРТОВОЙ НОМЕР   ║      ВЕС ГРУЗА     ║ КОЛ-ВО КОНТЕЙНЕРОВ ║       ИНДЕКС       ║" << endl;
 }
 
 void printMiddlePart() {
-    cout << "╠════════════════════╬═══════════════════╬════════════════════╬════════════════════╣" << endl;
+    cout << "╠════════════════════╬════════════════════╬════════════════════╬════════════════════╣════════════════════╣" << endl;
 }
 
 void printLowerPart() {
-    cout << "╚════════════════════╩═══════════════════╩════════════════════╩════════════════════╝" << endl;
+    cout << "╚════════════════════╩════════════════════╩════════════════════╩════════════════════╩════════════════════╝" << endl;
 }
 
 void errorHandler() {
@@ -174,9 +175,9 @@ void sortByFlightNumber(Aircraft *planes, int massiveLen, indexSort massiveSort[
         index++;
     }
 
-    int min = 0;
-    int minIndex = 0;
-    int j = 0;
+    int min = 0;            // минимальное значение
+    int minIndex = 0;       // минимальный индекс
+    int j = 0;              // индекс начала поисков
 
     while (j < index) {
         min = massiveSort[j].flight_number;
@@ -188,7 +189,7 @@ void sortByFlightNumber(Aircraft *planes, int massiveLen, indexSort massiveSort[
                 minIndex = i;
             }
         }
-
+        // замена местами наименьшего и стоящего в начале элемента
         Temporary = massiveSort[j];
         massiveSort[j] = massiveSort[minIndex];
         massiveSort[minIndex] = Temporary;
@@ -202,10 +203,12 @@ void printResult(Aircraft* planes, indexSort* massiveSort, int index) {
     printUpperPart();
     for (int i = 0; i < index; i++) {
         printMiddlePart();
+        // выводим элементы исходного массива, опираясь на индексы, полученные в результате индексной сортировки
         cout << "║" << setw(12) << planes[massiveSort[i].index-1].flight_number << setw(11) << "║"
-             << setw(14) << planes[massiveSort[i].index-1].tail_number << setw(9) << "║"
+             << setw(14) << planes[massiveSort[i].index-1].tail_number << setw(10) << "║"
              << setw(12) << planes[massiveSort[i].index-1].cargo_weight << setw(11) << "║"
-             << setw(11) << planes[massiveSort[i].index-1].box_quantity << setw(12) << "║" << planes[massiveSort[i].index-1].id <<endl;
+             << setw(11) << planes[massiveSort[i].index-1].box_quantity << setw(12) << "║"
+             << setw(11) << planes[massiveSort[i].index-1].id << setw(12) << "║" <<endl;
     }
     printLowerPart();
 }
