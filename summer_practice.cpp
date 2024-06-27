@@ -24,8 +24,8 @@ using namespace std;
 
 //const string path = "non_existent_file.txt";                          // несуществующий файл
 //const string path = "/Users/anton/code/stepik/empty_file.txt";        // пустой файл
-//const string path = "/Users/anton/code/stepik/info.txt";                // файл с корректными исходными данными
-const string path = "/Users/anton/code/stepik/incorrect.txt";
+//const string path = "/Users/anton/code/stepik/info.txt";              // файл с корректными исходными данными
+const string path = "/Users/anton/code/stepik/incorrect.txt";         // файл с некорректными исходными данными
 
 /**************************************************************
 *                         КОНСТАНТЫ                           *
@@ -55,11 +55,13 @@ struct indexSort            // Структура для индексной со
 /**************************************************************
 *                     ПРОТОТИПЫ ФУНКЦИЙ                       *
 **************************************************************/
-int checkTailNumber(const string &tailNumber);
+int checkTailNumber(const string &tailNumber, int massiveLen);
 
-int checkInteger(string &line);
+int checkInteger(string &line, int massiveLen);
 
-int checkDouble(const string &line);
+int checkDouble(const string &line, int massiveLen);
+
+void errorHandler(int errorFlag);
 
 void readDataFromFile(Aircraft &plane,
                       Aircraft *planes,
@@ -105,47 +107,52 @@ int main() {
 *                    ОПРЕДЕЛЕНИЕ ФУНКЦИЙ                      *
 **************************************************************/
 
-int checkTailNumber(const string &tailNumber) {
+int checkTailNumber(const string &tailNumber, int massiveLen) {
     if (tailNumber.size() != 6) {
-        cout << "Ошибка в бортовом номере " << tailNumber << "! Количество символов не совпадает." << endl;
-        return 0;
+        cout << "Ошибка в " << massiveLen<< " строке: в бортовом номере не совпадает количество символов." << endl;
+        return 1;
     }
     if ((tailNumber[0] >= 'A' && tailNumber[0] <= 'Z') == 0) {
         cout << tailNumber[1];
-        cout << "Ошибка в бортовом номере. Первый символ - не буква латинского алфавита." << endl;
-        return 0;
+        cout << "Ошибка в " << massiveLen << " строке: в бортовом номере первый символ - не буква латинского алфавита."
+             << endl;
+        return 1;
     }
     if (tailNumber[1] != '-') {
-        cout << "Ошибка в бортовом номере. Пропущен дефис." << endl;
-        return 0;
+        cout << "Ошибка в " << massiveLen << " строке: в бортовом номере пропущен дефис." << endl;
+        return 1;
     }
     for (int i = 2; i < 5; i++) { // Проверяем остальные элементы на цифры
         if (!isdigit(tailNumber[i])) {
-            cout << "Ошибка в бортовом номере. Проверьте число после дефиса." << endl;
-            return 0;
+            cout << "Ошибка в "<< massiveLen <<" строке: в бортовом номере не целое число после дефиса." << endl;
+            return 1;
         }
     }
-    return 1;
+    return 0;
 }
 
-int checkInteger(string &line) {
+int checkInteger(string &line, int massiveLen) {
     for (char c: line) {
         if (!isdigit(c)) {
-            cout << line << " не является целым числом." << endl;
-            return 0;
+            cout << "Ошибка в " << massiveLen << " строке: " << line << " не является целым числом." << endl;
+            return 1;
         }
     }
-    return 1;
+    return 0;
 }
 
-int checkDouble(const string &line) {
+int checkDouble(const string &line, int massiveLen) {
     for (char c: line) {
         if (!isdigit(c) && c != '.') {
-            cout << line << " не является вещественным числом." << endl;
-            return 0;
+            cout << "Ошибка в " << massiveLen << " строке: " << line << " не является вещественным числом." << endl;
+            return 1;
         }
     }
-    return 1;
+    return 0;
+}
+
+void errorHandler(int errorFlag) {
+
 }
 
 void readDataFromFile(Aircraft &plane,
@@ -172,10 +179,10 @@ void readDataFromFile(Aircraft &plane,
         plane.id = massiveLen;
         file >> plane.flight_number >> plane.tail_number >> plane.cargo_weight >> plane.box_quantity;
 
-        checkInteger(plane.flight_number);
-        checkTailNumber(plane.tail_number);
-        checkDouble(plane.cargo_weight);
-        checkInteger(plane.box_quantity);
+        checkInteger(plane.flight_number, massiveLen);
+        checkTailNumber(plane.tail_number, massiveLen);
+        checkDouble(plane.cargo_weight, massiveLen);
+        checkInteger(plane.box_quantity, massiveLen);
 
         planes[massiveLen - 1] = plane; // так как в массивах отсчет элементов начинается с 0
     }
