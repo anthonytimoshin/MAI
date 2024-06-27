@@ -24,8 +24,8 @@ using namespace std;
 
 //const string path = "non_existent_file.txt";                          // несуществующий файл
 //const string path = "/Users/anton/code/stepik/empty_file.txt";        // пустой файл
-const string path = "/Users/anton/code/stepik/info.txt";                // файл с корректными исходными данными
-//... всякие тесты
+//const string path = "/Users/anton/code/stepik/info.txt";                // файл с корректными исходными данными
+const string path = "/Users/anton/code/stepik/incorrect.txt";
 
 /**************************************************************
 *                         КОНСТАНТЫ                           *
@@ -39,10 +39,10 @@ const int max_len = 100;        // максимальное количество
 
 struct Aircraft     // Структура для хранения данных о приземлившихся самолетах
 {
-    int flight_number;                  // номер рейса
+    string flight_number;                  // номер рейса
     string tail_number;                 // бортовой номер
     string cargo_weight;                // вес груза
-    int box_quantity;                   // количество контейнеров
+    string box_quantity;                   // количество контейнеров
     int id;                             // индекс самолета
 };
 
@@ -57,7 +57,7 @@ struct indexSort            // Структура для индексной со
 **************************************************************/
 int checkTailNumber(const string &tailNumber);
 
-int checkInteger(const int &line);
+int checkInteger(string &line);
 
 int checkDouble(const string &line);
 
@@ -107,7 +107,7 @@ int main() {
 
 int checkTailNumber(const string &tailNumber) {
     if (tailNumber.size() != 6) {
-        cout << "Ошибка в бортовом номере! Количество символов не совпадает." << endl;
+        cout << "Ошибка в бортовом номере " << tailNumber << "! Количество символов не совпадает." << endl;
         return 0;
     }
     if ((tailNumber[0] >= 'A' && tailNumber[0] <= 'Z') == 0) {
@@ -128,12 +128,14 @@ int checkTailNumber(const string &tailNumber) {
     return 1;
 }
 
-int checkInteger(const int &line) {
-    if (line >= 0 && line <= 1000) {
-        return 1;
+int checkInteger(string &line) {
+    for (char c: line) {
+        if (!isdigit(c)) {
+            cout << line << " не является целым числом." << endl;
+            return 0;
+        }
     }
-    cout << line << " не входит в диапазон значений или не является целым числом." << endl;
-    return 0;
+    return 1;
 }
 
 int checkDouble(const string &line) {
@@ -149,7 +151,6 @@ int checkDouble(const string &line) {
 void readDataFromFile(Aircraft &plane,
                       Aircraft *planes,
                       int &massiveLen) { // функция чтения из файла
-    int controlSumm = 0; // контрольная сумма
 
     ifstream file(path);
 
@@ -171,14 +172,10 @@ void readDataFromFile(Aircraft &plane,
         plane.id = massiveLen;
         file >> plane.flight_number >> plane.tail_number >> plane.cargo_weight >> plane.box_quantity;
 
-        controlSumm += checkInteger(plane.flight_number) + checkInteger(plane.box_quantity) +
-                    checkDouble(plane.cargo_weight) + checkTailNumber(plane.tail_number);
-
-        if (controlSumm != 4) {
-            cout << "Ошибка во входных данных";
-            exit(1);
-        }
-        controlSumm = 0;
+        checkInteger(plane.flight_number);
+        checkTailNumber(plane.tail_number);
+        checkDouble(plane.cargo_weight);
+        checkInteger(plane.box_quantity);
 
         planes[massiveLen - 1] = plane; // так как в массивах отсчет элементов начинается с 0
     }
@@ -202,7 +199,7 @@ void echoPrint(Aircraft *planes,
 int boxCount(Aircraft *planes, int massiveLen) {
     int boxSum = 0;         // счетчик контейнеров
     for (int i = 0; i < massiveLen; i++) {
-        boxSum += planes[i].box_quantity;
+        boxSum += stoi(planes[i].box_quantity);
     }
     return boxSum;
 }
@@ -232,7 +229,7 @@ void sortByFlightNumber(Aircraft *planes, int massiveLen, indexSort massiveSort[
 
     for (int i = 0; i < massiveLen; i++) {
         massiveSort[index].index = i + 1;
-        massiveSort[index].flight_number = planes[i].flight_number;
+        massiveSort[index].flight_number = stoi(planes[i].flight_number);
         index++;
     }
 
